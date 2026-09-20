@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smash Ultimate Ruleset & Pick/Ban Arena</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="icon"
+      type="image/jpeg"
+      href="assets/stages/SSBU_spirit_Smash_Ball.webp"
+    />
+  </head>
+  <body>
+    <!-- Top Header Navigation -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="logo-group" id="btnLogo">
+          <img
+            class="smash-icon"
+            src="assets/stages/SSBU_spirit_Smash_Ball.webp"
+            alt="Smashball logo"
+          />
+          <div class="logo-text">
+            <h1 data-i18n="appTitle">Smash Ultimate Ruleset & Pick/Ban</h1>
+            <p data-i18n="appSubtitle">
+              Regional Ruleset Selector & Tournament Stage Striking Engine
+            </p>
+          </div>
+        </div>
+
+        <nav class="nav-tabs">
+          <button class="nav-tab-btn active" data-tab="arena">
+            <span>⚔️</span>
+            <span data-i18n="navPickBan">Pick & Ban Arena</span>
+          </button>
+          <button class="nav-tab-btn" data-tab="editor">
+            <span>⚙️</span>
+            <span data-i18n="navRuleset">Ruleset & Stages</span>
+          </button>
+          <button class="nav-tab-btn" data-tab="infographic">
+            <span>📋</span>
+            <span data-i18n="navInfographic">Tournament Sheet</span>
+          </button>
+        </nav>
+
+        <div class="header-actions">
+          <!-- Language Selector -->
+          <div class="lang-selector">
+            <button class="lang-btn active" data-lang="en" title="English">
+              🇺🇸 EN
+            </button>
+            <button class="lang-btn" data-lang="ja" title="日本語">
+              🇯🇵 日本語
+            </button>
+            <button class="lang-btn" data-lang="fr" title="Français">
+              🇫🇷 FR
+            </button>
+          </div>
+
+          <!-- Audio FX Toggle -->
+          <button class="icon-btn" id="btnAudioToggle" title="Toggle Sound FX">
+            <span id="audioIcon">🔊</span>
+            <span id="audioLabel" data-i18n="soundOn">Sound</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Regional Preset Quick-Bar -->
+    <section class="preset-bar">
+      <div class="preset-container">
+        <div class="preset-selector-group">
+          <span class="preset-label" data-i18n="selectRegion">Ruleset:</span>
+          <select id="presetDropdown" class="preset-select">
+            <option value="japan">🇯🇵 Japan</option>
+            <option value="na">🇺🇸 NA</option>
+            <option value="eu">🇪🇺 EU</option>
+            <option value="custom">🛠️ Custom</option>
+          </select>
+        </div>
+
+        <div class="preset-badges" id="presetBadges">
+          <!-- Dynamically populated badges -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Views Container -->
+    <main class="main-wrapper">
+      <!-- VIEW 1: Pick & Ban Arena -->
+      <section id="viewArena" class="view-panel active">
+        <!-- Tournament HUD (Scoreboard & Match Controls) -->
+        <div class="match-hud-panel">
+          <div class="hud-top-bar">
+            <div class="format-pill-group">
+              <button class="format-btn active" id="btnBo3" data-i18n="bestOf3">
+                Best of 3
+              </button>
+              <button class="format-btn" id="btnBo5" data-i18n="bestOf5">
+                Best of 5
+              </button>
+            </div>
+
+            <div class="match-controls">
+              <button
+                class="btn-sm"
+                id="btnSwapSides"
+                title="Swap Player Sides"
+              >
+                <span>🔄</span> <span data-i18n="swapSides">Swap Sides</span>
+              </button>
+              <button
+                class="btn-sm"
+                id="btnResetMatch"
+                title="Reset Entire Match"
+              >
+                <span>⚠️</span> <span data-i18n="resetMatch">Reset Match</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="scoreboard">
+            <!-- Player 1 -->
+            <div class="player-card p1" id="p1Card">
+              <div class="player-avatar">P1</div>
+              <div class="player-info">
+                <input
+                  type="text"
+                  id="p1NameInput"
+                  class="player-name-input"
+                  value="Player 1"
+                  title="Click to rename player 1"
+                />
+                <span class="player-score-badge" id="p1ScoreTag">0 Wins</span>
+              </div>
+            </div>
+
+            <!-- Center Score & Game Indicator -->
+            <div class="match-center-info">
+              <div class="game-counter-tag" id="gameCounterTag">Game 1</div>
+              <div class="score-display">
+                <span class="p1-score" id="p1ScoreVal">0</span>
+                <span class="divider">-</span>
+                <span class="p2-score" id="p2ScoreVal">0</span>
+              </div>
+            </div>
+
+            <!-- Player 2 -->
+            <div class="player-card p2" id="p2Card">
+              <div class="player-avatar">P2</div>
+              <div class="player-info">
+                <input
+                  type="text"
+                  id="p2NameInput"
+                  class="player-name-input"
+                  value="Player 2"
+                  title="Click to rename player 2"
+                />
+                <span class="player-score-badge" id="p2ScoreTag">0 Wins</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Turn & Striking Banner -->
+        <div class="turn-action-banner" id="turnBanner">
+          <div class="turn-text-content">
+            <h3 id="turnBannerTitle">Game 1: Determine First Ban</h3>
+            <p id="turnBannerSubtitle">
+              Play Rock-Paper-Scissors or choose who strikes first to begin
+              stage bans.
+            </p>
+          </div>
+
+          <div class="turn-banner-actions" id="turnBannerActions">
+            <!-- Populated dynamically (e.g. RPS button, Undo button, Report Winner buttons) -->
+          </div>
+        </div>
+
+        <!-- Official Character Selection Order Reminder (Shown during Counterpicks) -->
+        <div
+          class="character-order-bar"
+          id="charOrderBar"
+          style="display: none"
+        >
+          <span
+            style="font-weight: 800; color: var(--accent-gold)"
+            data-i18n="characterSelectionHeader"
+            >Official Tournament Character Order</span
+          >
+          <div class="char-order-steps">
+            <div class="char-step">
+              <span class="char-step-num">1</span>
+              <span data-i18n="charStep1">Winner announces character</span>
+            </div>
+            <div class="char-step">
+              <span class="char-step-num">2</span>
+              <span data-i18n="charStep2">Loser chooses character</span>
+            </div>
+            <div class="char-step">
+              <span class="char-step-num">3</span>
+              <span data-i18n="charStep3">Load into stage</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Starters Stage Section -->
+        <div class="stage-section-header">
+          <h2>
+            <span>🛡️</span>
+            <span data-i18n="starters">Starters</span>
+            <span class="badge badge-blue" id="starterCountBadge">5</span>
+          </h2>
+          <span class="stage-section-desc" data-i18n="starterStagesNotice"
+            >Game 1 is struck exclusively from Starter stages.</span
+          >
+        </div>
+
+        <div class="stages-grid" id="startersGrid">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Counterpicks Stage Section -->
+        <div class="stage-section-header" style="margin-top: 2.5rem">
+          <h2>
+            <span>⚔️</span>
+            <span data-i18n="counterpicks">Counterpicks</span>
+            <span class="badge badge-gold" id="counterpickCountBadge">3</span>
+          </h2>
+          <span class="stage-section-desc" data-i18n="counterpickStagesNotice"
+            >Counterpick stages unlock in Game 2 and onwards.</span
+          >
+        </div>
+
+        <div class="stages-grid" id="counterpicksGrid">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+      <!-- VIEW 2: Ruleset & Stage Pool Editor -->
+      <section id="viewEditor" class="view-panel">
+        <div class="editor-container">
+          <!-- Left: Match & Rule Settings -->
+          <div class="editor-settings-card">
+            <h2
+              style="font-size: 1.25rem; font-weight: 800"
+              data-i18n="editorTitle"
+            >
+              Custom Ruleset Configuration
+            </h2>
+            <p
+              style="font-size: 0.8rem; color: var(--text-muted)"
+              data-i18n="editorDesc"
+            >
+              Customize stages, stocks, timer, ban counts, and DSR rules.
+            </p>
+
+            <div class="setting-group">
+              <label class="setting-label" data-i18n="stocks">Stocks</label>
+              <input
+                type="number"
+                id="editStocks"
+                class="setting-input"
+                min="1"
+                max="5"
+                value="3"
+              />
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" data-i18n="time"
+                >Time Limit (Minutes)</label
+              >
+              <input
+                type="number"
+                id="editTime"
+                class="setting-input"
+                min="3"
+                max="10"
+                value="7"
+              />
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label">Stage Hazards</label>
+              <select id="editHazards" class="setting-select">
+                <option value="false" data-i18n="hazardsOff">
+                  Hazards OFF (Standard)
+                </option>
+                <option value="true" data-i18n="hazardsOn">Hazards ON</option>
+              </select>
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" data-i18n="bo3Bans">Bo3 Bans</label>
+              <input
+                type="number"
+                id="editBo3Bans"
+                class="setting-input"
+                min="0"
+                max="5"
+                value="3"
+              />
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" data-i18n="bo5Bans">Bo5 Bans</label>
+              <input
+                type="number"
+                id="editBo5Bans"
+                class="setting-input"
+                min="0"
+                max="5"
+                value="3"
+              />
+            </div>
+
+            <div class="setting-group">
+              <label class="setting-label" data-i18n="dsrType">DSR Rule</label>
+              <select id="editDsrRule" class="setting-select">
+                <option value="dsr" data-i18n="fullDsr">
+                  Full DSR (Cannot pick any stage won on)
+                </option>
+                <option value="mdsr" data-i18n="mdsr">
+                  Modified DSR (Cannot pick stage last won on)
+                </option>
+                <option value="no_dsr" data-i18n="noDsr">
+                  No DSR (Can pick any stage)
+                </option>
+              </select>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 0.6rem;
+                margin-top: 1rem;
+              "
+            >
+              <button
+                class="btn-sm btn-primary"
+                id="btnSaveCustom"
+                data-i18n="saveCustom"
+              >
+                Save as Custom Ruleset
+              </button>
+              <button
+                class="btn-sm"
+                id="btnResetToPreset"
+                data-i18n="resetToDefault"
+              >
+                Reset to Default Preset
+              </button>
+              <div style="display: flex; gap: 0.5rem">
+                <button
+                  class="btn-sm"
+                  id="btnExportJson"
+                  style="flex: 1"
+                  data-i18n="exportRuleset"
+                >
+                  Export JSON
+                </button>
+                <button
+                  class="btn-sm"
+                  id="btnImportJson"
+                  style="flex: 1"
+                  data-i18n="importRuleset"
+                >
+                  Import JSON
+                </button>
+                <input
+                  type="file"
+                  id="fileImportInput"
+                  accept=".json"
+                  style="display: none"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Stage Pool Manager -->
+          <div class="editor-stages-table">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+              "
+            >
+              <h3
+                style="font-size: 1.15rem; font-weight: 800"
+                data-i18n="stagePool"
+              >
+                Competitive Stage Pool
+              </h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted)"
+                >Assign each stage to Starter, Counterpick, or Off</span
+              >
+            </div>
+
+            <div id="editorStagesList">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: Tournament Infographic / Cheat Sheet -->
+      <section id="viewInfographic" class="view-panel">
+        <div
+          style="display: flex; justify-content: flex-end; margin-bottom: 1rem"
+        >
+          <button class="btn-sm btn-primary" id="btnPrintSheet">
+            <span>🖨️</span>
+            <span data-i18n="printSheet">Print / Save Sheet</span>
+          </button>
+        </div>
+
+        <div class="infographic-wrapper" id="infographicContent">
+          <!-- Dynamic Header Banner -->
+          <div class="infographic-header" id="infoBanner">
+            <div class="sheet-title-group">
+              <h1 id="infoSheetTitle">Competitive Smash Ultimate Ruleset</h1>
+              <p id="infoSheetSubtitle">
+                Regional Stage Selection & Ban Procedure
+              </p>
+            </div>
+            <div class="sheet-specs-bar" id="infoSpecsBar">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- Sheet Body -->
+          <div class="infographic-body">
+            <!-- Starters Block -->
+            <div class="sheet-stages-block">
+              <div class="sheet-block-title">
+                <span>🛡️</span>
+                <span data-i18n="starters">Starters</span>
+              </div>
+              <div class="sheet-grid" id="infoStartersGrid">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <!-- Counterpicks Block -->
+            <div class="sheet-stages-block">
+              <div class="sheet-block-title">
+                <span>⚔️</span>
+                <span data-i18n="counterpicks">Counterpicks</span>
+              </div>
+              <div class="sheet-grid" id="infoCounterpicksGrid">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <!-- Rules & Ban Procedure -->
+            <div class="sheet-rules-procedure">
+              <h3 data-i18n="matchProcedureHeader">
+                Stage Selection Procedure
+              </h3>
+              <div class="proc-columns">
+                <div class="proc-box">
+                  <h4 data-i18n="game1Striking">
+                    Game 1: Starter Striking (1-2-1)
+                  </h4>
+                  <ul>
+                    <li data-i18n="procG1_1">
+                      1. Players select characters (double-blind pick may be
+                      requested).
+                    </li>
+                    <li data-i18n="procG1_2">
+                      2. Rock-Paper-Scissors or coin toss determines who bans
+                      first.
+                    </li>
+                    <li data-i18n="procG1_3">
+                      3. 1-2-1 Starter bans: P1 bans 1, P2 bans 2, P1 picks from
+                      remaining 2 stages.
+                    </li>
+                  </ul>
+                </div>
+                <div class="proc-box">
+                  <h4 data-i18n="counterpickPhase">
+                    Game 2+: Counterpick Phase
+                  </h4>
+                  <ul>
+                    <li id="procG2_1Text">
+                      1. Previous game winner bans stages from Starters +
+                      Counterpicks.
+                    </li>
+                    <li data-i18n="procG2_2">
+                      2. Previous game loser picks the next stage (cannot pick
+                      stages restricted by DSR).
+                    </li>
+                    <li data-i18n="procG2_3">
+                      3. Winner declares character first, followed by loser.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Rock-Paper-Scissors & First Striker Decider Modal -->
+    <div class="modal-overlay" id="rpsModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h2 data-i18n="rpsTitle">Determine First Ban</h2>
+          <p data-i18n="rpsSubtitle">
+            Play Rock-Paper-Scissors or flip a coin to decide who strikes first!
+          </p>
+        </div>
+
+        <div class="rps-arena">
+          <div class="rps-hands-container">
+            <!-- Player 1 Hand -->
+            <div class="rps-player-hand">
+              <span style="font-weight: 800; color: #ef4444" id="rpsP1Label"
+                >Player 1</span
+              >
+              <div class="hand-emoji-display" id="rpsP1Hand">❓</div>
+              <div class="rps-hand-buttons">
+                <button
+                  class="rps-btn"
+                  data-player="p1"
+                  data-hand="rock"
+                  title="Rock"
+                >
+                  ✊
+                </button>
+                <button
+                  class="rps-btn"
+                  data-player="p1"
+                  data-hand="paper"
+                  title="Paper"
+                >
+                  ✋
+                </button>
+                <button
+                  class="rps-btn"
+                  data-player="p1"
+                  data-hand="scissors"
+                  title="Scissors"
+                >
+                  ✌️
+                </button>
+              </div>
+            </div>
+
+            <div
+              style="
+                font-size: 1.5rem;
+                font-weight: 900;
+                color: var(--text-dim);
+              "
+            >
+              VS
+            </div>
+
+            <!-- Player 2 Hand -->
+            <div class="rps-player-hand">
+              <span style="font-weight: 800; color: #3b82f6" id="rpsP2Label"
+                >Player 2</span
+              >
+              <div class="hand-emoji-display" id="rpsP2Hand">❓</div>
+              <div class="rps-hand-buttons">
+                <button
+                  class="rps-btn"
+                  data-player="p2"
+                  data-hand="rock"
+                  title="Rock"
+                >
+                  ✊
+                </button>
+                <button
+                  class="rps-btn"
+                  data-player="p2"
+                  data-hand="paper"
+                  title="Paper"
+                >
+                  ✋
+                </button>
+                <button
+                  class="rps-btn"
+                  data-player="p2"
+                  data-hand="scissors"
+                  title="Scissors"
+                >
+                  ✌️
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="rps-status-message" id="rpsStatusMessage">
+            Choose hands for both players
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-sm" id="btnCoinFlip">
+            <span>🪙</span> <span data-i18n="coinFlip">Flip Coin</span>
+          </button>
+          <button class="btn-sm" id="btnDirectP1">
+            <span style="color: #ef4444">●</span>
+            <span data-i18n="p1StrikesFirst">P1 Strikes First</span>
+          </button>
+          <button class="btn-sm" id="btnDirectP2">
+            <span style="color: #3b82f6">●</span>
+            <span data-i18n="p2StrikesFirst">P2 Strikes First</span>
+          </button>
+          <button
+            class="btn-sm btn-primary"
+            id="btnConfirmStriker"
+            style="display: none"
+            data-i18n="startStriking"
+          >
+            Begin Striking Phase
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Set Victory Modal -->
+    <div class="modal-overlay" id="victoryModal">
+      <div class="modal-dialog victory-modal">
+        <div class="victory-trophy">🏆</div>
+        <h2
+          style="font-size: 2rem; font-weight: 900; color: var(--accent-gold)"
+          data-i18n="setWinner"
+        >
+          SET VICTORY!
+        </h2>
+        <p
+          id="victorySubtitle"
+          style="font-size: 1.1rem; margin: 0.75rem 0 1.5rem; color: #fff"
+        >
+          Player 1 wins the set 2-1!
+        </p>
+
+        <div class="history-list" id="setMatchHistory">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div
+          style="
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+          "
+        >
+          <button
+            class="btn-sm btn-primary"
+            id="btnNewMatchFromVictory"
+            data-i18n="newMatch"
+          >
+            Start New Match
+          </button>
+          <button class="btn-sm" id="btnCloseVictory">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      Super Smash Bros. Ultimate Tournament Ruleset & Stage Pick/Ban Engine
+      &bull; Supports English, 日本語, and Français
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/bundle.js"></script>
+  </body>
+</html>
